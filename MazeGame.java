@@ -4,31 +4,32 @@ public class MazeGame {
     private Player player;
 
     public void startGame() {
-        // Setup rooms
         Room start = new Room("Kamu berada di ruangan awal.");
         Room north = new Room("Ruangan utara yang gelap.");
         Room east = new Room("Ruangan timur yang terang.");
+        Room west = new Room("Ruangan barat yang misterius.");
 
-        // Tetapkan hubungan antar ruangan
         start.setNeighbor("north", north);
         start.setNeighbor("east", east);
+        start.setNeighbor("west", west);
         north.setNeighbor("south", start);
         east.setNeighbor("west", start);
+        west.setNeighbor("east", start);
 
-        // Tambahkan entitas
         north.setEntity(new Trap());
         east.setEntity(new Treasure());
+        west.setEntity(new Trap());
 
-        // Inisialisasi player
         player = new Player("Petualang", '@', start);
 
-        // Game loop
         Scanner scanner = new Scanner(System.in);
         String input;
-        System.out.println("Selamat datang di Maze Adventure!");
+
+        System.out.println("🧭 Selamat datang di Maze Adventure!");
         while (true) {
             System.out.println("\n📍 Lokasi: " + player.getCurrentRoom().getDescription());
-            System.out.print("Arahkan (north/south/east/west/exit): ");
+            System.out.println("❤️ Nyawa: " + player.getHealth() + " | 💰 Skor: " + player.getScore());
+            System.out.print("➡️ Arahkan (north/south/east/west/exit): ");
             input = scanner.nextLine().toLowerCase();
 
             switch (input) {
@@ -37,12 +38,19 @@ public class MazeGame {
                 case "east"  -> player.moveEast();
                 case "west"  -> player.moveWest();
                 case "exit"  -> {
-                    System.out.println("Game selesai.");
+                    System.out.println("🚪 Game selesai.");
                     return;
                 }
-                default -> System.out.println("Perintah tidak dikenali.");
+                default -> System.out.println("❓ Perintah tidak dikenali.");
+            }
+
+            if (player.getHealth() <= 0) {
+                System.out.println("\n💀 Kamu mati karena kehabisan nyawa. Game over!");
+                break;
             }
         }
+
+        System.out.println("🏁 Skor akhir: " + player.getScore());
     }
 
     public static void main(String[] args) {
