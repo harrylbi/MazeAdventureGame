@@ -3,12 +3,16 @@ public class Treasure extends Entity {
 
     public Treasure() {
         super("Treasure", '$');
-        this.value = 10;  // Default nilai treasure
+        this.value = 10;
     }
 
-    @Override
     public void interact(Player player) {
-        System.out.println("🎉 Kamu menemukan harta karun! +10 poin.");
-        player.increaseScore(value);
+        if (isActive()) {
+            System.out.println("🎉 Kamu menemukan harta karun! +10 poin.");
+            player.increaseScore(10);
+            deactivate();
+        } else {
+            System.out.println("📍 Ini bekas tempat harta karun.");
+        }
     }
 }

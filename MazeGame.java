@@ -4,23 +4,39 @@ public class MazeGame {
     private Player player;
 
     public void startGame() {
-        Room start = new Room("Kamu berada di ruangan awal.");
-        Room north = new Room("Ruangan utara yang gelap.");
-        Room east = new Room("Ruangan timur yang terang.");
-        Room west = new Room("Ruangan barat yang misterius.");
+        Room[][] rooms = new Room[3][3];
 
-        start.setNeighbor("north", north);
-        start.setNeighbor("east", east);
-        start.setNeighbor("west", west);
-        north.setNeighbor("south", start);
-        east.setNeighbor("west", start);
-        west.setNeighbor("east", start);
+        // Inisialisasi semua ruangan
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                rooms[i][j] = new Room("Ruangan kosong.");
+            }
+        }
 
-        north.setEntity(new Trap());
-        east.setEntity(new Treasure());
-        west.setEntity(new Trap());
+        // Set deskripsi (bisa juga diubah lewat entity)
+        rooms[0][0].setDescription("Ruangan jebakan! ⚠️");
+        rooms[0][2].setDescription("Kamu menemukan harta karun! 💰");
+        rooms[1][1].setDescription("Kamu berada di ruangan awal.");
+        rooms[1][2].setDescription("Ruangan jebakan! ⚠️");
+        rooms[2][2].setDescription("Ini ruangan keluar! 🚪");
 
-        player = new Player("Petualang", '@', start);
+        // Tambahkan entitas
+        rooms[0][0].setEntity(new Trap());
+        rooms[1][2].setEntity(new Trap());
+        rooms[0][2].setEntity(new Treasure());
+        rooms[2][2].setEntity(new ExitRoom());
+
+        // Tetapkan koneksi antar ruangan
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (i > 0) rooms[i][j].setNeighbor("north", rooms[i - 1][j]);
+                if (i < 2) rooms[i][j].setNeighbor("south", rooms[i + 1][j]);
+                if (j > 0) rooms[i][j].setNeighbor("west", rooms[i][j - 1]);
+                if (j < 2) rooms[i][j].setNeighbor("east", rooms[i][j + 1]);
+            }
+        }
+
+        player = new Player("Petualang", '@', rooms[1][1]);
 
         Scanner scanner = new Scanner(System.in);
         String input;

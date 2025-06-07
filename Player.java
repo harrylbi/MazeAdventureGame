@@ -6,7 +6,7 @@ public class Player extends Entity implements Moveable {
     public Player(String name, char symbol, Room startRoom) {
         super(name, symbol);
         this.currentRoom = startRoom;
-        this.health = 3;  // Default 3 nyawa
+        this.health = 3;
         this.score = 0;
     }
 
@@ -19,8 +19,14 @@ public class Player extends Entity implements Moveable {
     }
 
     public void decreaseHealth() {
-        health--;
-        System.out.println("❤️ Nyawamu sekarang: " + health);
+        if (health > 0) {
+            health--;
+            System.out.println("❤️ Nyawamu sekarang: " + health);
+            if (health == 0) {
+                System.out.println("💀 Kamu kehabisan nyawa! Game Over.");
+                // Bisa tambah logika keluar game atau restart di sini
+            }
+        }
     }
 
     public void increaseScore(int amount) {
@@ -35,9 +41,11 @@ public class Player extends Entity implements Moveable {
     private void moveTo(Room room) {
         if (room != null) {
             currentRoom = room;
-            if (room.getEntity() != null) {
-                room.getEntity().interact(this);
-                room.setEntity(null);  // Entity hanya sekali digunakan
+            Entity entity = room.getEntity();
+            if (entity != null && entity.isActive()) {
+                entity.interact(this);
+                entity.deactivate();  // Entity hanya aktif sekali
+                room.setEntity(null); // Jika mau supaya entity hilang setelah interaksi
             }
         } else {
             System.out.println("❌ Tidak bisa ke arah itu.");
@@ -45,19 +53,27 @@ public class Player extends Entity implements Moveable {
     }
 
     @Override
-    public void moveNorth() { moveTo(currentRoom.getNorth()); }
+    public void moveNorth() {
+        moveTo(currentRoom.getNorth());
+    }
 
     @Override
-    public void moveSouth() { moveTo(currentRoom.getSouth()); }
+    public void moveSouth() {
+        moveTo(currentRoom.getSouth());
+    }
 
     @Override
-    public void moveEast() { moveTo(currentRoom.getEast()); }
+    public void moveEast() {
+        moveTo(currentRoom.getEast());
+    }
 
     @Override
-    public void moveWest() { moveTo(currentRoom.getWest()); }
+    public void moveWest() {
+        moveTo(currentRoom.getWest());
+    }
 
     @Override
     public void interact(Player player) {
-        // Tidak ada interaksi dengan diri sendiri
+        // Player tidak berinteraksi dengan dirinya sendiri
     }
 }

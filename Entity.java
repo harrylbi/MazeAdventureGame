@@ -1,6 +1,7 @@
 public abstract class Entity {
-    protected String name;
-    protected char symbol;
+    private String name;
+    private char symbol;
+    private boolean active = true;
 
     public Entity(String name, char symbol) {
         this.name = name;
@@ -15,5 +16,13 @@ public abstract class Entity {
 
     public char getSymbol() {
         return symbol;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void deactivate() {
+        this.active = false;
     }
 }
