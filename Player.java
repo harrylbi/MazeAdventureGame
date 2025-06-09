@@ -1,13 +1,19 @@
-public class Player extends Entity implements Moveable {
+public class Player {
+    private final String name;
+    private final char symbol;
+    private int health = 3;
+    private int score = 0;
     private Room currentRoom;
-    private int health;
-    private int score;
 
     public Player(String name, char symbol, Room startRoom) {
-        super(name, symbol);
+        this.name = name;
+        this.symbol = symbol;
         this.currentRoom = startRoom;
-        this.health = 3;
-        this.score = 0;
+        this.currentRoom.setVisited(true);
+    }
+
+    public Room getCurrentRoom() {
+        return currentRoom;
     }
 
     public int getHealth() {
@@ -18,62 +24,29 @@ public class Player extends Entity implements Moveable {
         return score;
     }
 
-    public void decreaseHealth() {
-        if (health > 0) {
-            health--;
-            System.out.println("❤️ Nyawamu sekarang: " + health);
-            if (health == 0) {
-                System.out.println("💀 Kamu kehabisan nyawa! Game Over.");
-                // Bisa tambah logika keluar game atau restart di sini
-            }
+    public void move(String direction) {
+        Room nextRoom = currentRoom.getNeighbor(direction);
+        if (nextRoom == null) {
+            System.out.println("🚫 Tidak bisa ke arah itu!");
+            return;
+        }
+
+        currentRoom = nextRoom;
+        currentRoom.setVisited(true);
+
+        Entity entity = currentRoom.getEntity();
+        if (entity != null) {
+            entity.interact(this);
+            // Hanya interaksi sekali
+            currentRoom.setEntity(null);
         }
     }
 
-    public void increaseScore(int amount) {
-        score += amount;
-        System.out.println("💰 Skormu sekarang: " + score);
+    public void addScore(int value) {
+        score += value;
     }
 
-    public Room getCurrentRoom() {
-        return currentRoom;
-    }
-
-    private void moveTo(Room room) {
-        if (room != null) {
-            currentRoom = room;
-            Entity entity = room.getEntity();
-            if (entity != null && entity.isActive()) {
-                entity.interact(this);
-                entity.deactivate();  // Entity hanya aktif sekali
-                room.setEntity(null); // Jika mau supaya entity hilang setelah interaksi
-            }
-        } else {
-            System.out.println("❌ Tidak bisa ke arah itu.");
-        }
-    }
-
-    @Override
-    public void moveNorth() {
-        moveTo(currentRoom.getNorth());
-    }
-
-    @Override
-    public void moveSouth() {
-        moveTo(currentRoom.getSouth());
-    }
-
-    @Override
-    public void moveEast() {
-        moveTo(currentRoom.getEast());
-    }
-
-    @Override
-    public void moveWest() {
-        moveTo(currentRoom.getWest());
-    }
-
-    @Override
-    public void interact(Player player) {
-        // Player tidak berinteraksi dengan dirinya sendiri
+    public void reduceHealth(int value) {
+        health -= value;
     }
 }

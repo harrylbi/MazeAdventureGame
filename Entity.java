@@ -10,19 +10,19 @@ public abstract class Entity {
 
     public abstract void interact(Player player);
 
-    public String getName() {
-        return name;
-    }
-
-    public char getSymbol() {
-        return symbol;
-    }
-
     public boolean isActive() {
         return active;
     }
 
     public void deactivate() {
         this.active = false;
+    }
+
+    public char getSymbol() {
+        return symbol;
+    }
+
+    public String getName() {
+        return name;
     }
 }
